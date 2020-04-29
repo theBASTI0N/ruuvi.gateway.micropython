@@ -9,6 +9,7 @@ def pulse(count, ms):
         led.on()
         sleep_ms(ms)
         led.off()
+        sleep_ms(ms)
 
 def slow_pulse(count):
     _thread.start_new_thread(pulse, (count, 1000))

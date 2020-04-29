@@ -12,13 +12,12 @@ from gwled import slow_pulse
 global MAC
 MAC = str.upper(hexlify(machine.unique_id(),).decode())
 
-global epoch
-epoch = False
+MOD = "MQTT"
 
 def time_stamp(time):
   return "{}-{:0>2d}-{:0>2d}{}{:0>2d}:{:0>2d}:{:0>2d}{}".format(time[0], time[1], time[2], "T", time[3], time[4], time[5], "Z")
 
-def uart():
+def uart(epoch):
     uart = UART(2, 115200)
     uart.init(115200, bits=8, parity=0, stop=1, tx=4, rx=5)
     while True:
@@ -53,20 +52,22 @@ def http_update():
     collect()
     up = time.ticks_ms() / 1000
     mFr= mem_free()
-    data = {'Messages': Messages,
+    data = {'active': active, 'Messages': Messages,
     'memFree' : mFr,
     'uptime': up}
     return data
 
-def start(config, pyhtml):
+def start(config):
+    global active
+    active = 0
     gwlogging.sendLog(gwlogging.INFO, "Starting HTTP", MOD)
     global tags
     tags = []
+    epoch = False
     if int(config['epoch']) == 1:
         epoch = True
-    _thread.start_new_thread(uart, ())
-    pyhtml.SetGlobalVar('GwMode', 0)
-    pyhtml.SetGlobalVar('active', 1)
+    _thread.start_new_thread(uart, (epoch,))
+    active = 1
     global Messages
     Messages = 0
     while True:

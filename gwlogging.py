@@ -26,53 +26,48 @@ try:
     sysCONF = read_sys()
 except:
     print("Could not get SYSLOG configuration")
-    try:
-        sysCONF = read_gw()
-        sysCONF['TZ'] = 0
-        sysCONF['syslog'] = 0
-        sysCONF['port'] = 514
-    except:
-        sysCONF = { 'host': '0.0.0.0', 'TZ': 0, 'syslog': 0, 'port': 514}
-        print("SYSLOG unable to be configured")
+    sysCONF = { 'host': '0.0.0.0', 'TZ': 0, 'tcp': 0, 'port': 514}
+    print("SYSLOG unable to be configured")
 
 def sendLog(level, message, mod):
     t = TYPE_STR[level]
     print("[SYSLOG %s] " % t + mod + ": " + message)
-    if int(sysCONF['syslog']) == 0:
-        u = usyslog.UDPClient(ip=sysCONF['host'], port=sysCONF['port'])
-        if level==ALERT:
-            u.alert(message, mod, sysCONF['TZ'])
-        elif level==CRIT:
-            u.critical(message, mod, sysCONF['TZ'])
-        elif level==ERR:
-            u.error(message, mod, sysCONF['TZ'])
-        elif level==WARN:
-            u.warning(message, mod, sysCONF['TZ'])
-        elif level==NOTICE:
-            u.notice(message, mod, sysCONF['TZ'])
-        elif level==INFO:
-            u.info(message, mod, sysCONF['TZ'])
-        elif level==DEBUG:
-            u.debug(message, mod, sysCONF['TZ'])
-        else:
-            u.log(usyslog.S_EMERG, message, mod, sysCONF['TZ'])
-        u.close()
-    elif int(sysCONF['syslog']) == 1:
-        u = usyslog.TCPClient(ip=sysCONF['host'], port=sysCONF['port'])
-        if level==ALERT:
-            u.alert(message, mod, sysCONF['TZ'])
-        elif level==CRIT:
-            u.critical(message, mod, sysCONF['TZ'])
-        elif level==ERR:
-            u.error(message, mod, sysCONF['TZ'])
-        elif level==WARN:
-            u.warning(message, mod, sysCONF['TZ'])
-        elif level==NOTICE:
-            u.notice(message, mod, sysCONF['TZ'])
-        elif level==INFO:
-            u.info(message, mod, sysCONF['TZ'])
-        elif level==DEBUG:
-            u.debug(message, mod, sysCONF['TZ'])
-        else:
-            u.log(usyslog.S_EMERG, message, mod, sysCONF['TZ'])
-        u.close()
+    if sysCONF['host'] is not '0.0.0.0':
+        if int(sysCONF['tcp']) == 0:
+            u = usyslog.UDPClient(ip=sysCONF['host'], port=sysCONF['port'])
+            if level==ALERT:
+                u.alert(message, mod, sysCONF['TZ'])
+            elif level==CRIT:
+                u.critical(message, mod, sysCONF['TZ'])
+            elif level==ERR:
+                u.error(message, mod, sysCONF['TZ'])
+            elif level==WARN:
+                u.warning(message, mod, sysCONF['TZ'])
+            elif level==NOTICE:
+                u.notice(message, mod, sysCONF['TZ'])
+            elif level==INFO:
+                u.info(message, mod, sysCONF['TZ'])
+            elif level==DEBUG:
+                u.debug(message, mod, sysCONF['TZ'])
+            else:
+                u.log(usyslog.S_EMERG, message, mod, sysCONF['TZ'])
+            u.close()
+        elif int(sysCONF['tcp']) == 1:
+            u = usyslog.TCPClient(ip=sysCONF['host'], port=sysCONF['port'])
+            if level==ALERT:
+                u.alert(message, mod, sysCONF['TZ'])
+            elif level==CRIT:
+                u.critical(message, mod, sysCONF['TZ'])
+            elif level==ERR:
+                u.error(message, mod, sysCONF['TZ'])
+            elif level==WARN:
+                u.warning(message, mod, sysCONF['TZ'])
+            elif level==NOTICE:
+                u.notice(message, mod, sysCONF['TZ'])
+            elif level==INFO:
+                u.info(message, mod, sysCONF['TZ'])
+            elif level==DEBUG:
+                u.debug(message, mod, sysCONF['TZ'])
+            else:
+                u.log(usyslog.S_EMERG, message, mod, sysCONF['TZ'])
+            u.close()

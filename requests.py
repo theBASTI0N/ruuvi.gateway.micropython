@@ -55,6 +55,7 @@ none_selected="""\
                 <li class="pure-menu-item"><a href="cloud" class="pure-menu-link">Cloud</a></li>
                 <li class="pure-menu-item"><a href="syslog" class="pure-menu-link">Syslog</a></li>
                 <li class="pure-menu-item"><a href="reset.html" class="pure-menu-link">Reset</a></li>
+                <li class="pure-menu-item"><a href="restart" class="pure-menu-link">Restart</a></li>
                 </ul>
 """
 
@@ -66,6 +67,7 @@ wifi_selected="""\
                 <li class="pure-menu-item"><a href="cloud" class="pure-menu-link">Cloud</a></li>
                 <li class="pure-menu-item"><a href="syslog" class="pure-menu-link">Syslog</a></li>
                 <li class="pure-menu-item"><a href="reset.html" class="pure-menu-link">Reset</a></li>
+                <li class="pure-menu-item"><a href="restart" class="pure-menu-link">Restart</a></li>
                 </ul>
 """
 
@@ -77,6 +79,7 @@ cloud_selected="""\
                 <li class="pure-menu-item pure-menu-selected"><a href="cloud" class="pure-menu-link">Cloud</a></li>
                 <li class="pure-menu-item"><a href="syslog" class="pure-menu-link">Syslog</a></li>
                 <li class="pure-menu-item"><a href="reset.html" class="pure-menu-link">Reset</a></li>
+                <li class="pure-menu-item"><a href="restart" class="pure-menu-link">Restart</a></li>
                 </ul>
 """
 
@@ -88,6 +91,7 @@ home_selected="""\
                 <li class="pure-menu-item"><a href="cloud" class="pure-menu-link">Cloud</a></li>
                 <li class="pure-menu-item"><a href="syslog" class="pure-menu-link">Syslog</a></li>
                 <li class="pure-menu-item"><a href="reset.html" class="pure-menu-link">Reset</a></li>
+                <li class="pure-menu-item"><a href="restart" class="pure-menu-link">Restart</a></li>
                 </ul>
 """
 
@@ -99,6 +103,7 @@ about_selected="""\
                 <li class="pure-menu-item"><a href="cloud" class="pure-menu-link">Cloud</a></li>
                 <li class="pure-menu-item"><a href="syslog" class="pure-menu-link">Syslog</a></li>
                 <li class="pure-menu-item"><a href="reset.html" class="pure-menu-link">Reset</a></li>
+                <li class="pure-menu-item"><a href="restart" class="pure-menu-link">Restart</a></li>
                 </ul>
 """
 
@@ -110,6 +115,7 @@ status_selected="""\
                 <li class="pure-menu-item"><a href="cloud" class="pure-menu-link">Cloud</a></li>
                 <li class="pure-menu-item"><a href="syslog" class="pure-menu-link">Syslog</a></li>
                 <li class="pure-menu-item"><a href="reset.html" class="pure-menu-link">Reset</a></li>
+                <li class="pure-menu-item"><a href="restart" class="pure-menu-link">Restart</a></li>
                 </ul>
 """
 
@@ -121,6 +127,19 @@ reset_selected="""\
                 <li class="pure-menu-item"><a href="cloud" class="pure-menu-link">Cloud</a></li>
                 <li class="pure-menu-item"><a href="syslog" class="pure-menu-link">Syslog</a></li>
                 <li class="pure-menu-item pure-menu-selected"><a href="reset.html" class="pure-menu-link">Reset</a></li>
+                <li class="pure-menu-item"><a href="restart" class="pure-menu-link">Restart</a></li>
+                </ul>
+"""
+
+restart_selected="""\
+                <li class="pure-menu-item"><a href="index.html" class="pure-menu-link">Home</a></li>
+                <li class="pure-menu-item"><a href="about.html" class="pure-menu-link">About</a></li>
+                <li class="pure-menu-item"><a href="status.pyhtml" class="pure-menu-link">Status</a></li>
+                <li class="pure-menu-item"><a href="wifi" class="pure-menu-link">WiFi</a></li>
+                <li class="pure-menu-item"><a href="cloud" class="pure-menu-link">Cloud</a></li>
+                <li class="pure-menu-item"><a href="syslog" class="pure-menu-link">Syslog</a></li>
+                <li class="pure-menu-item pure-menu-selected"><a href="reset.html" class="pure-menu-link">Reset</a></li>
+                <li class="pure-menu-item"><a href="restart" class="pure-menu-link">Restart</a></li>
                 </ul>
 """
 
@@ -132,6 +151,7 @@ sys_selected="""\
                 <li class="pure-menu-item"><a href="cloud" class="pure-menu-link">Cloud</a></li>
                 <li class="pure-menu-item pure-menu-selected"><a href="syslog" class="pure-menu-link">Syslog</a></li>
                 <li class="pure-menu-item"><a href="reset.html" class="pure-menu-link">Reset</a></li>
+                <li class="pure-menu-item"><a href="restart" class="pure-menu-link">Restart</a></li>
                 </ul>
 """
 
@@ -193,6 +213,20 @@ reset_content="""
             </div>
             """
 
+restart_content="""
+            <h1>Reset Ruuvi Gateway</h1>
+            <h2>Proceed with caution</h2>
+            </div>
+            <div class="content">
+            <h2 class="content-subhead">Reset Function</h2>
+            <form class="pure-form pure-form-aligned" action="/restart-post" method="post">
+                <label for="restart" class="pure-radio"> <input type="radio" name="restart" value="0">Cancel </label>
+                <label for="restart" class="pure-radio"> <input type="radio" name="restart" value="1">Restart </label>
+                <button type="submit" value="ok" class="pure-button pure-button-primary">Submit</button>
+            </form>
+            </div>
+            """
+
 status_content="""
                 <h1>Ruuvi Gateway</h1>
                 <h2>Status</h2>
@@ -230,9 +264,9 @@ status_content="""
                 <td>Not Configured</td>
                 {{ end }}
 
-                {{ if active == 1 }}
+                {{ if data['active'] == 1 }}
                 <td>Yes</td>
-                {{ elif active == 0 }}
+                {{ elif data['active'] == 0 }}
                 <td>No</td>
                 {{ else }}
                 <td>Unknown</td>
@@ -285,14 +319,14 @@ sys_mode= """
                             <input id="TZ" name="TZ" type="number" min="-12" max="12" value="0" placeholder="0">
                             </div>
                             <div class="pure-control-group">
-                            <label for="syslog" class="pure-radio">
-                                <input id="syslog" type="radio" name="syslog" value="1">
+                            <label for="tcp" class="pure-radio">
+                                <input id="tcp" type="radio" name="tcp" value="1">
                                 TCP
                             </label>
                             </div>
                             <div class="pure-control-group">
-                            <label for="syslog" class="pure-radio">
-                                <input id="syslog" type="radio" name="syslog" value="0" checked>
+                            <label for="tcp" class="pure-radio">
+                                <input id="tcp" type="radio" name="tcp" value="0" checked>
                                 UDP
                             </label>
                             </div>
@@ -325,7 +359,7 @@ cloud_http= """
                             <fieldset>
                             <div class="pure-control-group">
                             <label for="host">HTTP URL</label>
-                            <input id="url" name="url" type="text" placeholder="https://url.com">
+                            <input id="host" name="host" type="text" placeholder="https://url.com">
                             </div>
                             <div class="pure-control-group">
                             <label for="epoch" class="pure-radio">
@@ -334,30 +368,25 @@ cloud_http= """
                             </label>
                             </div>
                             <div class="pure-control-group">
-                            <label for="human" class="pure-radio">
-                                <input id="human" type="radio" name="epoch" value="0" checked>
+                            <label for="epoch" class="pure-radio">
+                                <input id="epoch" type="radio" name="epoch" value="0" checked>
                                 Human Readable Timestamps: 2020-04-01T11:05:00Z
+                            </label>
+                            </div>
+                             <div class="pure-control-group">
+                            <label for="dble" class="pure-radio">
+                                <input id="dble" type="radio" name="dble" value="1" checked>
+                                BLE data will be decoded
+                            </label>
+                            </div>
+                            <div class="pure-control-group">
+                            <label for="dble" class="pure-radio">
+                                <input id="dble" type="radio" name="dble" value="0">
+                                Only raw data is sent
                             </label>
                             </div>
                             <button type="submit" value="ok" class="pure-button pure-button-primary">Submit</button>
                             </fieldset>
-                            </form>
-                        </div>
-            </div>
-                    </div>
-                        <div class="content">
-                            <form class="pure-form pure-form-aligned" action="/cloud-posthttp" method="post">
-                            <label for="url">HTTP URL</label>
-                            <input id="url" name="url" type="text" placeholder="URL">
-                            <label for="epoch" class="pure-radio">
-                                <input id="epoch" type="radio" name="epoch" value="1" checked>
-                                Unix Timestamps: 1585735460
-                            </label>
-                            <label for="human" class="pure-radio">
-                                <input id="human" type="radio" name="epoch" value="0" checked>
-                                Human Readable Timestamps: 2020-04-01T11:05:00Z
-                            </label>
-                            <button type="submit" value="ok" class="pure-button pure-button-primary">Submit</button>
                             </form>
                         </div>
             </div>
