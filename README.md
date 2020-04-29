@@ -34,7 +34,7 @@ You will be able to configure the device from the web page.
 
 A double press will toggle the web interface and perform a restart. If it was enabled the double press will mean on the next boot the Web Interface is disabled.
 
-A long press (3 seconds) will remove the wifi configuration and perform a restart. The hotspot will be re-enabled and the Web interface will be enabled.
+A long press (3 seconds) will remove the WiFi configuration and perform a restart. The hotspot will be re-enabled and the Web interface will be enabled.
 
 ##MQTT Communication
 
@@ -53,6 +53,6 @@ ESP32 | Function
 # Note
 I have not implemented the Ethernet adapter as I do not have the physical hardware yet.
 
-WiFi managemer is based on: https://github.com/tayfunulu/WiFiManager
+WiFi manager is based on: https://github.com/tayfunulu/WiFiManager
 Web Server is can be found at: https://github.com/jczic/MicroWebSrv2#mws2-adddefaultpage
 Web design is based on the "Responsive Side Menu" at: https://purecss.io/layouts/
