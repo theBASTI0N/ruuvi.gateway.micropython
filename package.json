@@ -35,7 +35,7 @@
   },
   "release": {
     "branches": [
-      "master"
+      "ruuvi_gw"
     ],
     "remoteTags": true,
     "plugins": [
