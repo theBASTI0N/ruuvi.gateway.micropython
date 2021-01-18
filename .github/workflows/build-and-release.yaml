@@ -1,0 +1,82 @@
+name: Build and Release
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Cache xtensa
+        id: cache-xtensa
+        uses: actions/cache@v1
+        with:
+          path: esp-xtensa/
+          key: ${{ runner.OS }}-xtensa-esp32-elf-linux64-1.22.0-80-g6c4433a-5.2.0
+
+      - name: Download xtensa
+        if: steps.cache-xtensa.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ${GITHUB_WORKSPACE}/esp-xtensa/
+          cd ${GITHUB_WORKSPACE}/esp-xtensa/
+          wget -q 'https://dl.espressif.com/dl/xtensa-esp32-elf-linux64-1.22.0-80-g6c4433a-5.2.0.tar.gz'
+
+      - name: Extract xtensa
+        run: |
+          mkdir -p ${GITHUB_WORKSPACE}/esp/
+          tar -xzf ${GITHUB_WORKSPACE}/esp-xtensa/xtensa-esp32-elf-linux64-1.22.0-80-g6c4433a-5.2.0.tar.gz -C ${GITHUB_WORKSPACE}/esp/
+
+      - name: Clone ESP
+        run: |
+          cd ${GITHUB_WORKSPACE}/esp/
+          git clone https://github.com/espressif/esp-idf.git
+          cd esp-idf/
+          git checkout 9e70825d1e1cbf7988cf36981774300066580ea7
+          git submodule update --init --recursive
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get -y install git wget libncurses-dev flex bison gperf python3 python3-pip python3-setuptools python-serial python3-serial python3-click python3-cryptography python3-future python3-pyparsing python3-pyelftools cmake ninja-build ccache libffi-dev libssl-dev
+      
+      - name: Install Rust+Cargo
+        run: |
+          sudo /bin/sh -c 'curl https://sh.rustup.rs -sSf | sh -s -- -y'
+
+      - name: Clone Micropython
+        run: |
+          cd ${GITHUB_WORKSPACE}
+          git clone --recursive https://github.com/micropython/micropython.git
+          cd micropython/mpy-cross
+          make
+
+      - name: Clone Repo
+        run: |
+          cd ${GITHUB_WORKSPACE}
+          git clone --recursive https://github.com/${GITHUB_REPOSITORY} ruuvi_gw_mp
+
+
+      - name: Determine next release version
+        run: |
+          npm ci
+          export NEXT_VERSION=`node ${GITHUB_WORKSPACE}/ruuvi_gw_mp/.github/workflows/get-next-version.js`
+
+      - name: Build
+        run: |
+          sudo env "PATH=$PATH" pip3 install pyserial
+          export PATH="${GITHUB_WORKSPACE}/esp/xtensa-esp32-elf/bin:$PATH"
+          export IDF_PATH="${GITHUB_WORKSPACE}/esp/esp-idf"
+          export PATH=~/.local/bin:/usr/share/rust/.cargo/bin:$PATH
+          cd ${GITHUB_WORKSPACE}/ruuvi_gw_mp/src
+          mv -v * ${GITHUB_WORKSPACE}/micropython/ports/esp32/modules/
+          cd ${GITHUB_WORKSPACE}/micropython/ports/esp32/
+          make
+
+          #FW
+          mv -v ${GITHUB_WORKSPACE}/micropython/ports/esp32/build-GENERIC/firmware.bin ${GITHUB_WORKSPACE}/firmware.bin
+
+      - name: Semantic release
+        continue-on-error: true
+        run: |
+          npx semantic-release

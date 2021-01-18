@@ -1,58 +1,40 @@
-# ruuvi.gateway.micropython
-Micropython FW for the ESP32 on the Ruuvi Gateway
+# Introduction
+Micropython FW for your Ruuvi Gateway's ESP32 module.
 
+## Features
+1. Continous UART reading
+2. Asynchronous MQTT/HTTP endpoints
+3. Both HTTP and MQTT can be used at the same time
+
+## Known Issue
+1. Currently no SSL support. (Awaiting a PR to be approved for Micropython)
+2. Web Server removed due to memory/threading issue whilst using lan. Asynchronous web server might be used in the future.
+
+# Flashing
 The prebuilt FW should be flashed onto the Ruuvi Gateway as this includes the frozen modules. It can be found on the Releases page.
 
 ```bash
-pip install esptool
+pip3 install esptool
 esptool.py --port /dev/ttyUSB0 erase_flash
-esptool.py --chip esp32 --port /dev/ttyUSB0 write_flash -z 0x1000 ~/Downloads/ruuviGW_v1_5_0.bin
-#or for button using PIN 22
-esptool.py --chip esp32 --port /dev/ttyUSB0 write_flash -z 0x1000 ~/Downloads/ruuviGW_v1_5_0_P22.bin
+# Assumes only on is present in Downloads
+esptool.py --chip esp32 --port /dev/ttyUSB0 write_flash -z 0x1000 ~/Downloads/ruuviGW_v*
 ```
 
-No files are needed to be uploaded via Pymakr as on first boot they are created via a python script :)
+# Configuration
+Configuration is done via a python file, which can be found in the CONFIG folder.
 
-To build your own version follow the instruction found at https://github.com/micropython/micropython then at https://github.com/micropython/micropython/tree/master/ports/esp32 to install the micropython build environment and prepare the ESP32 SDK.
+mpfshell can be used to upload this once it has been edited for your environment.
 
-Once ready place all the files into ~/micropython/port/esp32/modules
-Note: exclude any files that do not end with .py, for example the README.md
+```bash
+git clone https://github.com/theBASTI0N/ruuvi.gateway.micropython.git
+cd ruuvi.gateway.micropython
+cd CONFIG
+pip3 install mpfshell
+mpfshell
+# May be different on you system. Use ls /dev/tty* to look at devices
+open ttyUSB0
+put config.py
+repl
+```
 
-The WiFi hot-spot SSID and password is set in wifimgr.py
-
-Once connect navigate to 192.168.4.1 and connect to your WiFi network.
-
-The device will then get connected to your WiFi and receive an IP from your router.
-
-Check your router or the REPL in pymakr and you will see the assigned IP.
-
-Once connected to your network again navigate to that IP in a web browser.
-
-You will be able to configure the device from the web page.
-
-## Button Presses
-
-A double press will toggle the web interface and perform a restart. If it was enabled the double press will mean on the next boot the Web Interface is disabled.
-
-A long press (3 seconds) will remove the WiFi configuration and perform a restart. The hotspot will be re-enabled and the Web interface will be enabled.
-
-##MQTT Communication
-
-If using MQTT the device will be configurable via MQTT messages. An example of the topic and messages are found in mqtt.json file which can be imported into Node-Red.
-
-### IO pins:
-
-ESP32 | Function
---|--
-2 | Reset button
-23 | LED
-4 | UART TX
-5 | UART RX
-
-
-# Note
-I have not implemented the Ethernet adapter as I do not have the physical hardware yet.
-
-WiFi manager is based on: https://github.com/tayfunulu/WiFiManager
-Web Server is can be found at: https://github.com/jczic/MicroWebSrv2#mws2-adddefaultpage
-Web design is based on the "Responsive Side Menu" at: https://purecss.io/layouts/
+Once the file has been placed on the device either restart it, or press CTRL+D when in the REPL.

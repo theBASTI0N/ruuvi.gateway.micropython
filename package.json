@@ -1,0 +1,58 @@
+{
+  "name": "@theBASTI0N/ruuvi.gateway.micropython",
+  "version": "0.0.0-development",
+  "description": "Ruuvi Node application built using nRF Connect SDK",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theBASTI0N/ruuvi.gateway.micropython.git"
+  },
+  "bugs": {
+    "url": "https://github.com/theBASTI0N/ruuvi.gateway.micropython/issues"
+  },
+  "homepage": "https://github.com/theBASTI0N/ruuvi.gateway.micropython",
+  "keywords": [
+    "Cloud",
+    "IoT",
+    "Ruuvi",
+    "BLE Gateway",
+    "Gateway"
+  ],
+  "author": "theBASTI0N",
+  "license": "BSD-3-Clause",
+  "devDependencies": {
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-angular": "^8.3.4",
+    "@semantic-release/commit-analyzer": "^8.0.1",
+    "husky": "^4.2.1",
+    "semantic-release": "^17.2.3",
+    "standard": "^14.3.1",
+    "stream-buffers": "^3.0.2"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -e"
+    }
+  },
+  "release": {
+    "branches": [
+      "master"
+    ],
+    "remoteTags": true,
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      [
+        "@semantic-release/github",
+        {
+          "assets": [
+            {
+              "path": "/home/runner/work/ruuvi.gateway.micropython/ruuvi.gateway.micropython/firmware.bin",
+              "name": "ruuvi-gw-mypy-${nextRelease.gitTag}.bin",
+              "label": "Pre-build bin file for Ruuvi Gateway (${nextRelease.gitTag})"
+            }
+          ]
+        }
+      ]
+    ]
+  }
+}
