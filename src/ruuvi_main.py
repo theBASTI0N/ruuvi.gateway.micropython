@@ -36,7 +36,7 @@ if mqtt_config.get('enabled'):
 if http_config.get('enabled'):
     import urequests_async as requests
 
-__version__ = "0.0.1"
+__version__ = "1.0.0"
 
 #=================================================================================================
 #==========================================Networking=============================================
@@ -225,8 +225,30 @@ async def endpoint_loop():
             #print(m['data']['timestamp'], ": Message Sent")
         await asyncio.sleep(10)
 
+# MQTT heartbeat only. Idea is that http data keeps Ruuvi GW format. 
+# If not MQTT print out Uptime and free memory every 30 seconds 
+async def heartbeat_loop():
+    while True:
+        await asyncio.sleep(30)
+        if mqtt_config.get('enabled'):
+            ts = tm.unix_time_stamp()
+            up = time.ticks_ms() / 1000
+            mFr= mem_free()
+            m = {'edgeMAC': MAC, 'ts' : ts,
+                'memFree' : mFr,
+                'uptime': up}
+            msgJson = ujson.dumps(m)
+            await mqtt.publish( MQTT_BASE_TOPIC + "heartbeat", msgJson )
+            print("Heartbeat at: ", ts)
+            print("Free Memory: ", mFr)
+            print("Uptime: ", up)
+        else:
+            print("Free Memory: ", mem_free())
+            print("Uptime: ", (time.ticks_ms() / 1000))
+
 
 start()
 
 loop.create_task(endpoint_loop())
+loop.create_task(heartbeat_loop())
 loop.run_forever()

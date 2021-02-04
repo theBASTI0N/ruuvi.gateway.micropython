@@ -41,7 +41,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          sudo apt-get -y install git wget libncurses-dev flex bison gperf python3 python3-pip python3-setuptools python-serial python3-serial python3-click python3-cryptography python3-future python3-pyparsing python3-pyelftools cmake ninja-build ccache libffi-dev libssl-dev
+          sudo apt-get -y install git wget libncurses-dev flex bison gperf python3 python3-pip python3-setuptools python3-serial python3-click python3-cryptography python3-future python3-pyparsing python3-pyelftools cmake ninja-build ccache libffi-dev libssl-dev
       
       - name: Install Rust+Cargo
         run: |
